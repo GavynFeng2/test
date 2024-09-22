@@ -31,6 +31,8 @@ $ tensorboard --logdir='runs' --port=6006 --host='localhost'
 You need to specify the net you want to train using arg --net
 
 ```bash
+# use cpu only (default) to train vgg16
+$ python train.py --net vgg16
 # use a single gpu to train vgg16
 $ python train.py --net vgg16 --gpu [gpu_id]
 # for example, use GPU 0 to train vgg16
@@ -40,6 +42,9 @@ $ python train.py --net vgg16 --gpu 0
 $ torchrun --master_addr [MASTER_ADDR] --master_port [MASTER_PORT] --nproc_per_node [NUM_GPUs_Per_Node] train.py --net vgg16 --gpu [gpu1_id,gpu2_id,...,gpun_id]
 # for example, use GPU 0 and GPU 1 in one node to train vgg16
 $ torchrun --master_addr localhost --master_port 6000 --nproc_per_node 2 train.py --net vgg16 --gpu 0,1
+
+# set training arguments if you want, for example, train 100 epochs and batch size is 256:
+$ python train.py --net vgg16 --gpu 0 --epoch 100 --batch 256
 ```
 
 sometimes, you might want to use warmup training by set ```--warmup``` to 1 or 2, to prevent network
