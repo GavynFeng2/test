@@ -8,6 +8,7 @@ of a model
 author baiyu
 """
 
+import os
 import argparse
 from collections import OrderedDict
 from matplotlib import pyplot as plt
@@ -22,7 +23,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--net', type=str, required=True, help='net type')
     parser.add_argument('--weights', type=str, required=True, help='the weights file you want to test')
-    parser.add_argument('--gpu', type=int, default=-1, help='gpu device id, set `-1` to use cpu only')
+    parser.add_argument('--gpu', type=str, default='-1', help='gpu device id, set `-1` to use cpu only')
     parser.add_argument('--batch', '-b', type=int, default=16, help='batch size for dataloader')
     args = parser.parse_args()
 
@@ -30,19 +31,20 @@ if __name__ == '__main__':
         device = 'cpu'
     else:
         if torch.cuda.is_available():
-            device = 'cuda'
+            device = f'cuda:{args.gpu}'
+            os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         else:
             raise ValueError('GPU is not available. please set `--gpu -1` to use cpu only. ')
-        
+    
     net = get_network(args.net).to(device)
 
     _, cifar100_test_loader = get_dataloader(
         settings.CIFAR100_TRAIN_MEAN,
         settings.CIFAR100_TRAIN_STD,
-        #settings.CIFAR100_PATH,
         rank=0,
         num_workers=4,
         batch_size=args.batch,
+        const_test_batch=False
     )
 
     state_dict = torch.load(args.weights, weights_only=True)

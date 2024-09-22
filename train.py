@@ -144,6 +144,7 @@ if __name__ == '__main__':
     else:
         if torch.cuda.is_available():
             device = 'cuda'
+            os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         else:
             raise ValueError('GPU is not available. please set `--gpu -1` to use cpu only. ')
     
@@ -176,6 +177,7 @@ if __name__ == '__main__':
         rank=rank,
         batch_size=args.batch,
         num_workers=args.num_workers,
+        const_test_batch=True,
         shuffle=True
     )
 

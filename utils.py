@@ -161,14 +161,15 @@ def get_network(net):
     return net
 
 
-def get_dataloader(mean, std, rank=0, batch_size=16, num_workers=2, shuffle=True):
+def get_dataloader(mean, std, rank=0, batch_size=16, num_workers=2, const_test_batch=True, shuffle=True):
     """ return training dataloader
     Args:
         mean: mean of cifar100 training dataset
         std: std of cifar100 training dataset
-        path: path to cifar100 training python dataset
-        batch_size: dataloader batchsize
+        rank: global rank of
+        batch_size: dataloader batch size
         num_workers: dataloader num_works
+        const_test_batch: if set `True`, then the batch size of test_dataloader set to be 64, regardless args.batch
         shuffle: whether to shuffle
     Returns: train_data_loader:torch dataloader object
     """
@@ -212,9 +213,11 @@ def get_dataloader(mean, std, rank=0, batch_size=16, num_workers=2, shuffle=True
         cifar100_training, sampler=cifar100_training_sampler, 
         shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
     
+    test_batch_size = 64 if const_test_batch else batch_size
+    
     cifar100_test_loader = DataLoader(
         cifar100_test, sampler=cifar100_test_sampler,
-        shuffle=shuffle, num_workers=num_workers, batch_size=64)
+        shuffle=shuffle, num_workers=num_workers, batch_size=test_batch_size)
 
     return cifar100_training_loader, cifar100_test_loader
 
