@@ -5,151 +5,152 @@ author baiyu
 import os
 import sys
 import re
+import time
 import datetime
 
 import numpy
 
-import torch
 from torch.optim.lr_scheduler import _LRScheduler
-import torchvision
-import torchvision.transforms as transforms
+from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
+import torch.distributed as dist
+from torch.utils.data.distributed import DistributedSampler
 
-def get_network(args):
+def get_network(net):
     """ return given network
     """
 
-    if args.net == 'vgg16':
+    if net == 'vgg16':
         from models.vgg import vgg16_bn
         net = vgg16_bn()
-    elif args.net == 'vgg13':
+    elif net == 'vgg13':
         from models.vgg import vgg13_bn
         net = vgg13_bn()
-    elif args.net == 'vgg11':
+    elif net == 'vgg11':
         from models.vgg import vgg11_bn
         net = vgg11_bn()
-    elif args.net == 'vgg19':
+    elif net == 'vgg19':
         from models.vgg import vgg19_bn
         net = vgg19_bn()
-    elif args.net == 'densenet121':
+    elif net == 'densenet121':
         from models.densenet import densenet121
         net = densenet121()
-    elif args.net == 'densenet161':
+    elif net == 'densenet161':
         from models.densenet import densenet161
         net = densenet161()
-    elif args.net == 'densenet169':
+    elif net == 'densenet169':
         from models.densenet import densenet169
         net = densenet169()
-    elif args.net == 'densenet201':
+    elif net == 'densenet201':
         from models.densenet import densenet201
         net = densenet201()
-    elif args.net == 'googlenet':
+    elif net == 'googlenet':
         from models.googlenet import googlenet
         net = googlenet()
-    elif args.net == 'inceptionv3':
+    elif net == 'inceptionv3':
         from models.inceptionv3 import inceptionv3
         net = inceptionv3()
-    elif args.net == 'inceptionv4':
+    elif net == 'inceptionv4':
         from models.inceptionv4 import inceptionv4
         net = inceptionv4()
-    elif args.net == 'inceptionresnetv2':
+    elif net == 'inceptionresnetv2':
         from models.inceptionv4 import inception_resnet_v2
         net = inception_resnet_v2()
-    elif args.net == 'xception':
+    elif net == 'xception':
         from models.xception import xception
         net = xception()
-    elif args.net == 'resnet18':
+    elif net == 'resnet18':
         from models.resnet import resnet18
         net = resnet18()
-    elif args.net == 'resnet34':
+    elif net == 'resnet34':
         from models.resnet import resnet34
         net = resnet34()
-    elif args.net == 'resnet50':
+    elif net == 'resnet50':
         from models.resnet import resnet50
         net = resnet50()
-    elif args.net == 'resnet101':
+    elif net == 'resnet101':
         from models.resnet import resnet101
         net = resnet101()
-    elif args.net == 'resnet152':
+    elif net == 'resnet152':
         from models.resnet import resnet152
         net = resnet152()
-    elif args.net == 'preactresnet18':
+    elif net == 'preactresnet18':
         from models.preactresnet import preactresnet18
         net = preactresnet18()
-    elif args.net == 'preactresnet34':
+    elif net == 'preactresnet34':
         from models.preactresnet import preactresnet34
         net = preactresnet34()
-    elif args.net == 'preactresnet50':
+    elif net == 'preactresnet50':
         from models.preactresnet import preactresnet50
         net = preactresnet50()
-    elif args.net == 'preactresnet101':
+    elif net == 'preactresnet101':
         from models.preactresnet import preactresnet101
         net = preactresnet101()
-    elif args.net == 'preactresnet152':
+    elif net == 'preactresnet152':
         from models.preactresnet import preactresnet152
         net = preactresnet152()
-    elif args.net == 'resnext50':
+    elif net == 'resnext50':
         from models.resnext import resnext50
         net = resnext50()
-    elif args.net == 'resnext101':
+    elif net == 'resnext101':
         from models.resnext import resnext101
         net = resnext101()
-    elif args.net == 'resnext152':
+    elif net == 'resnext152':
         from models.resnext import resnext152
         net = resnext152()
-    elif args.net == 'shufflenet':
+    elif net == 'shufflenet':
         from models.shufflenet import shufflenet
         net = shufflenet()
-    elif args.net == 'shufflenetv2':
+    elif net == 'shufflenetv2':
         from models.shufflenetv2 import shufflenetv2
         net = shufflenetv2()
-    elif args.net == 'squeezenet':
+    elif net == 'squeezenet':
         from models.squeezenet import squeezenet
         net = squeezenet()
-    elif args.net == 'mobilenet':
+    elif net == 'mobilenet':
         from models.mobilenet import mobilenet
         net = mobilenet()
-    elif args.net == 'mobilenetv2':
+    elif net == 'mobilenetv2':
         from models.mobilenetv2 import mobilenetv2
         net = mobilenetv2()
-    elif args.net == 'nasnet':
+    elif net == 'nasnet':
         from models.nasnet import nasnet
         net = nasnet()
-    elif args.net == 'attention56':
+    elif net == 'attention56':
         from models.attention import attention56
         net = attention56()
-    elif args.net == 'attention92':
+    elif net == 'attention92':
         from models.attention import attention92
         net = attention92()
-    elif args.net == 'seresnet18':
+    elif net == 'seresnet18':
         from models.senet import seresnet18
         net = seresnet18()
-    elif args.net == 'seresnet34':
+    elif net == 'seresnet34':
         from models.senet import seresnet34
         net = seresnet34()
-    elif args.net == 'seresnet50':
+    elif net == 'seresnet50':
         from models.senet import seresnet50
         net = seresnet50()
-    elif args.net == 'seresnet101':
+    elif net == 'seresnet101':
         from models.senet import seresnet101
         net = seresnet101()
-    elif args.net == 'seresnet152':
+    elif net == 'seresnet152':
         from models.senet import seresnet152
         net = seresnet152()
-    elif args.net == 'wideresnet':
+    elif net == 'wideresnet':
         from models.wideresidual import wideresnet
         net = wideresnet()
-    elif args.net == 'stochasticdepth18':
+    elif net == 'stochasticdepth18':
         from models.stochasticdepth import stochastic_depth_resnet18
         net = stochastic_depth_resnet18()
-    elif args.net == 'stochasticdepth34':
+    elif net == 'stochasticdepth34':
         from models.stochasticdepth import stochastic_depth_resnet34
         net = stochastic_depth_resnet34()
-    elif args.net == 'stochasticdepth50':
+    elif net == 'stochasticdepth50':
         from models.stochasticdepth import stochastic_depth_resnet50
         net = stochastic_depth_resnet50()
-    elif args.net == 'stochasticdepth101':
+    elif net == 'stochasticdepth101':
         from models.stochasticdepth import stochastic_depth_resnet101
         net = stochastic_depth_resnet101()
 
@@ -157,13 +158,10 @@ def get_network(args):
         print('the network name you have entered is not supported yet')
         sys.exit()
 
-    if args.gpu: #use_gpu
-        net = net.cuda()
-
     return net
 
 
-def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
+def get_dataloader(mean, std, rank=0, batch_size=16, num_workers=2, shuffle=True):
     """ return training dataloader
     Args:
         mean: mean of cifar100 training dataset
@@ -183,35 +181,43 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=Tru
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    #cifar100_training = CIFAR100Train(path, transform=transform_train)
-    cifar100_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
-    cifar100_training_loader = DataLoader(
-        cifar100_training, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
-
-    return cifar100_training_loader
-
-def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
-    """ return training dataloader
-    Args:
-        mean: mean of cifar100 test dataset
-        std: std of cifar100 test dataset
-        path: path to cifar100 test python dataset
-        batch_size: dataloader batchsize
-        num_workers: dataloader num_works
-        shuffle: whether to shuffle
-    Returns: cifar100_test_loader:torch dataloader object
-    """
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    #cifar100_test = CIFAR100Test(path, transform=transform_test)
-    cifar100_test = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
-    cifar100_test_loader = DataLoader(
-        cifar100_test, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
 
-    return cifar100_test_loader
+    #cifar100_training = CIFAR100Train(path, transform=transform_train)
+    root_dir = './data/'
+
+    if rank == 0:
+        cifar100_training = datasets.CIFAR100(root=root_dir, train=True, download=True, transform=transform_train)
+        cifar100_test = datasets.CIFAR100(root=root_dir, train=False, download=True, transform=transform_test)
+        with open(os.path.join(root_dir + 'download_complete.lock'), 'w') as f:
+            f.write('done')
+
+    else:
+        while not os.path.exists(os.path.join(root_dir + 'download_complete.lock')):
+            time.sleep(1)
+        cifar100_training = datasets.CIFAR100(root=root_dir, train=True, download=False, transform=transform_train)
+        cifar100_test = datasets.CIFAR100(root=root_dir, train=False, download=False, transform=transform_test)
+    
+    if dist.is_initialized():
+        shuffle = False
+
+    cifar100_training_sampler = DistributedSampler(cifar100_training, num_replicas=dist.get_world_size(), rank=dist.get_rank()) if dist.is_initialized() else None
+    cifar100_test_sampler = DistributedSampler(cifar100_test, num_replicas=dist.get_world_size(), rank=dist.get_rank()) if dist.is_initialized() else None
+
+    cifar100_training_loader = DataLoader(
+        cifar100_training, sampler=cifar100_training_sampler, 
+        shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
+    
+    cifar100_test_loader = DataLoader(
+        cifar100_test, sampler=cifar100_test_sampler,
+        shuffle=shuffle, num_workers=num_workers, batch_size=64)
+
+    return cifar100_training_loader, cifar100_test_loader
+
 
 def compute_mean_std(cifar100_dataset):
     """compute the mean and std of cifar100 dataset
@@ -238,7 +244,6 @@ class WarmUpLR(_LRScheduler):
         total_iters: totoal_iters of warmup phase
     """
     def __init__(self, optimizer, total_iters, last_epoch=-1):
-
         self.total_iters = total_iters
         super().__init__(optimizer, last_epoch)
 
@@ -306,3 +311,8 @@ def best_acc_weights(weights_folder):
 
     best_files = sorted(best_files, key=lambda w: int(re.search(regex_str, w).groups()[1]))
     return best_files[-1]
+
+def reduce_metric(metric):
+    dist.all_reduce(metric, op=dist.ReduceOp.SUM)
+    return metric
+
