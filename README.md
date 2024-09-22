@@ -2,9 +2,9 @@
 This is a repository forked from weiaicunzai/pytorch-cifar100
 
 ## Requirements
-python >= 3.8
-torch >= 2.0.0
-
+- python >= 3.8
+- torch >= 2.0.0
+- tensorboard(optional)
 
 ## Usage
 
@@ -37,7 +37,7 @@ $ python train.py --net vgg16 --gpu [gpu_id]
 $ python train.py --net vgg16 --gpu 0
 
 # use multi gpus to train vgg16
-$ torchrun --master_addr [MASTER_ADDR] --master_port [MASTER_PORT] --nproc_per_node [NUM_GPUs_Per_Node] train.py --net vgg16 --gpu [gpu_id1,gpu_id2,...,gpu_idn]
+$ torchrun --master_addr [MASTER_ADDR] --master_port [MASTER_PORT] --nproc_per_node [NUM_GPUs_Per_Node] train.py --net vgg16 --gpu [gpu1_id,gpu2_id,...,gpun_id]
 # for example, use GPU 0 and GPU 1 in one node to train vgg16
 $ torchrun --master_addr localhost --master_port 6000 --nproc_per_node 2 train.py --net vgg16 --gpu 0,1
 ```
@@ -95,12 +95,15 @@ Normally, the weights file with the best accuracy would be written to the disk w
 
 
 ### 5. test the model
-Test the model using test.py
+Test the model using test.py (Not implementing with DDP, which is not necessary...)
 ```bash
+# use cpu (default)
 $ python test.py --net vgg16 --weights path_to_vgg16_weights_file
+# use gpu
+$ python test.py --net vgg16 --weights path_to_vgg16_weights_file --gpu 0
 ```
 
-## Implementated NetWork
+## Implemenztated NetWork
 
 - vgg [Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556v6)
 - googlenet [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842v1)
