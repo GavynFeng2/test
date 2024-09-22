@@ -9,36 +9,53 @@ author baiyu
 """
 
 import argparse
-
+from collections import OrderedDict
 from matplotlib import pyplot as plt
 
 import torch
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
 
 from conf import settings
-from utils import get_network, get_test_dataloader
+from utils import get_network, get_dataloader
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-net', type=str, required=True, help='net type')
-    parser.add_argument('-weights', type=str, required=True, help='the weights file you want to test')
-    parser.add_argument('-gpu', action='store_true', default=False, help='use gpu or not')
-    parser.add_argument('-b', type=int, default=16, help='batch size for dataloader')
+    parser.add_argument('--net', type=str, required=True, help='net type')
+    parser.add_argument('--weights', type=str, required=True, help='the weights file you want to test')
+    parser.add_argument('--gpu', type=int, default=-1, help='gpu device id, set `-1` to use cpu only')
+    parser.add_argument('--batch', '-b', type=int, default=16, help='batch size for dataloader')
     args = parser.parse_args()
 
-    net = get_network(args)
+    if args.gpu == '-1':
+        device = 'cpu'
+    else:
+        if torch.cuda.is_available():
+            device = 'cuda'
+        else:
+            raise ValueError('GPU is not available. please set `--gpu -1` to use cpu only. ')
+        
+    net = get_network(args.net).to(device)
 
-    cifar100_test_loader = get_test_dataloader(
+    _, cifar100_test_loader = get_dataloader(
         settings.CIFAR100_TRAIN_MEAN,
         settings.CIFAR100_TRAIN_STD,
         #settings.CIFAR100_PATH,
+        rank=0,
         num_workers=4,
-        batch_size=args.b,
+        batch_size=args.batch,
     )
 
-    net.load_state_dict(torch.load(args.weights))
+    state_dict = torch.load(args.weights, weights_only=True)
+    new_state_dict = OrderedDict()
+
+    # If training and saving model with DDP, it's necessary to remove the prefix `module.`
+    for k, v in state_dict.items():
+        if k.startswith('module.'):
+            new_state_dict[k[7:]] = v
+        else:
+            new_state_dict[k] = v
+
+    net.load_state_dict(new_state_dict)
     print(net)
     net.eval()
 
@@ -50,12 +67,7 @@ if __name__ == '__main__':
         for n_iter, (image, label) in enumerate(cifar100_test_loader):
             print("iteration: {}\ttotal {} iterations".format(n_iter + 1, len(cifar100_test_loader)))
 
-            if args.gpu:
-                image = image.cuda()
-                label = label.cuda()
-                print('GPU INFO.....')
-                print(torch.cuda.memory_summary(), end='')
-
+            image, label = image.to(device), label.to(device)
 
             output = net(image)
             _, pred = output.topk(5, 1, largest=True, sorted=True)
@@ -69,7 +81,7 @@ if __name__ == '__main__':
             #compute top1
             correct_1 += correct[:, :1].sum()
 
-    if args.gpu:
+    if device != 'cpu':
         print('GPU INFO.....')
         print(torch.cuda.memory_summary(), end='')
 

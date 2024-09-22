@@ -144,7 +144,6 @@ if __name__ == '__main__':
     else:
         if torch.cuda.is_available():
             device = 'cuda'
-            num_gpus = len([int(i) for i in args.gpu.split(',')])
         else:
             raise ValueError('GPU is not available. please set `--gpu -1` to use cpu only. ')
     
