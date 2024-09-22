@@ -1,20 +1,16 @@
 # Pytorch-cifar100
-
-practice on cifar100 using pytorch
+This is a repository forked from weiaicunzai/pytorch-cifar100
 
 ## Requirements
-
-This is my experiment eviroument
-- python3.6
-- pytorch1.6.0+cu101
-- tensorboard 2.2.2(optional)
-
+- python >= 3.8
+- torch >= 2.0.0
+- tensorboard(optional)
 
 ## Usage
 
 ### 1. enter directory
 ```bash
-$ cd pytorch-cifar100
+$ cd pytorch-cifar100-ddp
 ```
 
 ### 2. dataset
@@ -32,14 +28,26 @@ $ tensorboard --logdir='runs' --port=6006 --host='localhost'
 ```
 
 ### 4. train the model
-You need to specify the net you want to train using arg -net
+You need to specify the net you want to train using arg --net
 
 ```bash
-# use gpu to train vgg16
-$ python train.py -net vgg16 -gpu
+# use cpu only (default) to train vgg16
+$ python train.py --net vgg16
+# use a single gpu to train vgg16
+$ python train.py --net vgg16 --gpu [gpu_id]
+# for example, use GPU 0 to train vgg16
+$ python train.py --net vgg16 --gpu 0
+
+# use multi gpus to train vgg16
+$ torchrun --master_addr [MASTER_ADDR] --master_port [MASTER_PORT] --nproc_per_node [NUM_GPUs_Per_Node] train.py --net vgg16 --gpu [gpu1_id,gpu2_id,...,gpun_id]
+# for example, use GPU 0 and GPU 1 in one node to train vgg16
+$ torchrun --master_addr localhost --master_port 6000 --nproc_per_node 2 train.py --net vgg16 --gpu 0,1
+
+# set training arguments if you want, for example, train 100 epochs and batch size is 256:
+$ python train.py --net vgg16 --gpu 0 --epoch 100 --batch 256
 ```
 
-sometimes, you might want to use warmup training by set ```-warm``` to 1 or 2, to prevent network
+sometimes, you might want to use warmup training by set ```--warmup``` to 1 or 2, to prevent network
 diverge during early training phase.
 
 The supported net args are:
@@ -92,12 +100,15 @@ Normally, the weights file with the best accuracy would be written to the disk w
 
 
 ### 5. test the model
-Test the model using test.py
+Test the model using test.py (Not implementing with DDP, which is not necessary...)
 ```bash
-$ python test.py -net vgg16 -weights path_to_vgg16_weights_file
+# use cpu (default)
+$ python test.py --net vgg16 --weights path_to_vgg16_weights_file
+# use gpu
+$ python test.py --net vgg16 --weights path_to_vgg16_weights_file --gpu 0
 ```
 
-## Implementated NetWork
+## Implemenztated NetWork
 
 - vgg [Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556v6)
 - googlenet [Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842v1)
