@@ -129,6 +129,7 @@ if __name__ == '__main__':
     parser.add_argument('--net', type=str, required=True, help='net type')
     parser.add_argument('--gpu', type=str, default='-1', help='gpu device id, set `-1` to use cpu only')
     parser.add_argument('--batch', '-b', type=int, default=128, help='batch size for dataloader')
+    parser.add_argument('--use_test_batch', action='store_true', default=False, help='Whether to set test_dataloader batch size as args.batch')
     parser.add_argument('--epoch', type=int, default=100, help='training epochs')
     parser.add_argument('--warmup', type=int, default=1, help='warm up training phase')
     parser.add_argument('--learning_rate', '-lr', type=float, default=0.1, help='initial learning rate')
@@ -177,7 +178,7 @@ if __name__ == '__main__':
         rank=rank,
         batch_size=args.batch,
         num_workers=args.num_workers,
-        const_test_batch=True,
+        const_test_batch=(not args.use_test_batch),
         shuffle=True
     )
 
