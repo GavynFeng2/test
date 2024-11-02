@@ -19,9 +19,11 @@ from torch.utils.data import DataLoader
 def get_network(args):
     """ return given network
     """
+    print(args.net)
     if args.net == 'sqnetf4':
         from cangjie_models.sqnetF4 import sqnetf4
         net = sqnetf4()
+        print("network selected")
     if args.net == 'sqnetc3579':
         from cangjie_models.sqnetC3579 import sqnetc3579
         net = sqnetc3579()
