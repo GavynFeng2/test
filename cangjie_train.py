@@ -139,8 +139,8 @@ if __name__ == '__main__':
     print("data loaded")
     time_out = perf_counter()
     with open("train.log", "a") as f:
-        f.write("net_ver"+ current_time + " ")
-        f.write("train at" + current_time + " ")
+        f.write(f"net_ver {net.__class__.__name__} {current_time} ")
+        f.write(f"train at {current_time} ")
         f.write("data loading time: {:.2f}s\n".format(time_out - time_in))
 
 
