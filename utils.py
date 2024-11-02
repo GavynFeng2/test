@@ -24,7 +24,7 @@ def get_network(args):
         from cangjie_models.sqnetF4 import sqnetf4
         net = sqnetf4()
         print("network selected")
-    if args.net == 'sqnetc3579':
+    elif args.net == 'sqnetc3579':
         from cangjie_models.sqnetC3579 import sqnetc3579
         net = sqnetc3579()
     elif args.net == 'vgg16':
