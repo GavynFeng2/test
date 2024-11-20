@@ -1,0 +1,135 @@
+net_verMonday_15_July_2024_13h_36m_07s train atMonday_15_July_2024_13h_36m_07s data loading time: 1020.47s
+epoch 1 training time consumed: 130.26s
+epoch 2 training time consumed: 122.33s
+epoch 3 training time consumed: 121.47s
+epoch 4 training time consumed: 120.14s
+epoch 5 training time consumed: 117.78s
+epoch 6 training time consumed: 119.11s
+epoch 7 training time consumed: 117.37s
+epoch 8 training time consumed: 120.20s
+epoch 9 training time consumed: 120.56s
+epoch 10 training time consumed: 121.52s
+train atMonday_15_July_2024_13h_36m_07s train time: 1477.86s
+net_verMonday_15_July_2024_14h_17m_38s train atMonday_15_July_2024_14h_17m_38s data loading time: 991.61s
+epoch 1 training time consumed: 82.49s
+epoch 2 training time consumed: 77.83s
+epoch 3 training time consumed: 77.33s
+epoch 4 training time consumed: 76.96s
+epoch 5 training time consumed: 76.66s
+epoch 6 training time consumed: 78.00s
+epoch 7 training time consumed: 77.45s
+epoch 8 training time consumed: 77.18s
+epoch 9 training time consumed: 76.56s
+epoch 10 training time consumed: 79.04s
+train atMonday_15_July_2024_14h_17m_38s train time: 1005.25s
+net_verMonday_15_July_2024_14h_52m_18s train atMonday_15_July_2024_14h_52m_18s data loading time: 948.40s
+epoch 1 training time consumed: 83.59s
+epoch 2 training time consumed: 85.18s
+epoch 3 training time consumed: 93.11s
+epoch 4 training time consumed: 81.24s
+epoch 5 training time consumed: 79.15s
+epoch 6 training time consumed: 80.56s
+epoch 7 training time consumed: 78.63s
+epoch 8 training time consumed: 80.09s
+epoch 9 training time consumed: 85.16s
+epoch 10 training time consumed: 83.01s
+train atMonday_15_July_2024_14h_52m_18s train time: 1064.90s
+net_verMonday_15_July_2024_15h_52m_03s train atMonday_15_July_2024_15h_52m_03s data loading time: 1338.00s
+epoch 1 training time consumed: 121.11s
+epoch 2 training time consumed: 115.59s
+epoch 3 training time consumed: 114.57s
+epoch 4 training time consumed: 114.46s
+epoch 5 training time consumed: 114.21s
+epoch 6 training time consumed: 114.10s
+epoch 7 training time consumed: 114.27s
+epoch 8 training time consumed: 114.46s
+epoch 9 training time consumed: 114.25s
+epoch 10 training time consumed: 115.09s
+train atMonday_15_July_2024_15h_52m_03s train time: 1417.98s
+net_verMonday_15_July_2024_16h_51m_39s train atMonday_15_July_2024_16h_51m_39s data loading time: 1132.75s
+epoch 1 training time consumed: 98.84s
+epoch 2 training time consumed: 93.67s
+epoch 3 training time consumed: 92.61s
+epoch 4 training time consumed: 92.33s
+epoch 5 training time consumed: 92.92s
+epoch 6 training time consumed: 92.64s
+epoch 7 training time consumed: 91.90s
+epoch 8 training time consumed: 92.31s
+epoch 9 training time consumed: 92.45s
+epoch 10 training time consumed: 92.17s
+train atMonday_15_July_2024_16h_51m_39s train time: 1185.14s
+net_verMonday_15_July_2024_17h_33m_11s train atMonday_15_July_2024_17h_33m_11s data loading time: 1149.25s
+epoch 1 training time consumed: 96.32s
+epoch 2 training time consumed: 85.74s
+epoch 3 training time consumed: 85.63s
+epoch 4 training time consumed: 82.57s
+epoch 5 training time consumed: 84.45s
+epoch 6 training time consumed: 100.93s
+epoch 7 training time consumed: 104.32s
+epoch 8 training time consumed: 89.12s
+epoch 9 training time consumed: 92.80s
+epoch 10 training time consumed: 91.46s
+train atMonday_15_July_2024_17h_33m_11s train time: 1195.30s
+net_verMonday_15_July_2024_18h_17m_36s train atMonday_15_July_2024_18h_17m_36s data loading time: 1089.67s
+epoch 1 training time consumed: 83.32s
+epoch 2 training time consumed: 64.00s
+epoch 3 training time consumed: 64.05s
+epoch 4 training time consumed: 64.41s
+epoch 5 training time consumed: 66.17s
+epoch 6 training time consumed: 68.41s
+epoch 7 training time consumed: 72.11s
+epoch 8 training time consumed: 63.72s
+epoch 9 training time consumed: 67.06s
+epoch 10 training time consumed: 71.98s
+train atMonday_15_July_2024_18h_17m_36s train time: 932.04s
+net_verMonday_15_July_2024_18h_53m_27s train atMonday_15_July_2024_18h_53m_27s data loading time: 991.86s
+epoch 1 training time consumed: 89.76s
+epoch 2 training time consumed: 81.88s
+epoch 3 training time consumed: 82.32s
+epoch 4 training time consumed: 81.63s
+epoch 5 training time consumed: 85.32s
+epoch 6 training time consumed: 82.27s
+epoch 7 training time consumed: 81.29s
+epoch 8 training time consumed: 81.92s
+epoch 9 training time consumed: 81.58s
+epoch 10 training time consumed: 81.12s
+train atMonday_15_July_2024_18h_53m_27s train time: 1061.66s
+net_verMonday_15_July_2024_19h_35m_20s train atMonday_15_July_2024_19h_35m_20s data loading time: 965.29s
+epoch 1 training time consumed: 64.67s
+epoch 2 training time consumed: 58.33s
+epoch 3 training time consumed: 59.22s
+epoch 4 training time consumed: 58.85s
+epoch 5 training time consumed: 58.46s
+epoch 6 training time consumed: 57.91s
+epoch 7 training time consumed: 62.43s
+epoch 8 training time consumed: 59.35s
+epoch 9 training time consumed: 58.67s
+epoch 10 training time consumed: 58.35s
+train atMonday_15_July_2024_19h_35m_20s train time: 817.57s
+net_verMonday_15_July_2024_20h_12m_01s train atMonday_15_July_2024_20h_12m_01s data loading time: 999.80s
+epoch 1 training time consumed: 85.90s
+epoch 2 training time consumed: 78.41s
+epoch 3 training time consumed: 73.76s
+epoch 4 training time consumed: 73.77s
+epoch 5 training time consumed: 73.85s
+epoch 6 training time consumed: 75.34s
+epoch 7 training time consumed: 73.62s
+epoch 8 training time consumed: 74.30s
+epoch 9 training time consumed: 77.02s
+epoch 10 training time consumed: 74.41s
+train atMonday_15_July_2024_20h_12m_01s train time: 979.27s
+net_verMonday_15_July_2024_20h_50m_57s train atMonday_15_July_2024_20h_50m_57s data loading time: 1011.95s
+epoch 1 training time consumed: 65.02s
+epoch 2 training time consumed: 57.06s
+epoch 3 training time consumed: 57.36s
+epoch 4 training time consumed: 57.89s
+epoch 5 training time consumed: 55.65s
+epoch 6 training time consumed: 60.06s
+epoch 7 training time consumed: 58.41s
+epoch 8 training time consumed: 55.88s
+epoch 9 training time consumed: 56.47s
+epoch 10 training time consumed: 54.50s
+train atMonday_15_July_2024_20h_50m_57s train time: 789.56s
+net_verMonday_15_July_2024_22h_19m_16s train atMonday_15_July_2024_22h_19m_16s data loading time: 1021.04s
+net_verMonday_15_July_2024_22h_41m_03s train atMonday_15_July_2024_22h_41m_03s data loading time: 1041.47s
+net_verMonday_15_July_2024_23h_09m_36s train atMonday_15_July_2024_23h_09m_36s data loading time: 1028.62s

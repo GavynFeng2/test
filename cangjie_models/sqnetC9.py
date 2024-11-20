@@ -45,7 +45,7 @@ class Fire(nn.Module):
 
         return x
 
-class SqueezeNet(nn.Module):
+class SqNetC9(nn.Module):
 
     """mobile net with simple bypass"""
     def __init__(self, class_num=952):
@@ -66,7 +66,7 @@ class SqueezeNet(nn.Module):
         self.fire6 = Fire(256, 384, 48)
         self.fire7 = Fire(384, 384, 48)
         self.fire8 = Fire(384, 512, 64)
-        self.fire9 = Fire(512, 512, 64)
+        # self.fire9 = Fire(512, 512, 64)
         self.conv10 = nn.Conv2d(512, class_num, 1)
         self.avg = nn.AdaptiveAvgPool2d(1)
         self.maxpool = nn.MaxPool2d(2, 2)
@@ -85,13 +85,13 @@ class SqueezeNet(nn.Module):
         f8 = self.fire8(f7)
         f8 = self.maxpool(f8)
 
-        f9 = self.fire9(f8)
-        c10 = self.conv10(f9)
+        # f9 = self.fire9(f8)
+        c10 = self.conv10(f8)
 
         x = self.avg(c10)
         x = x.view(x.size(0), -1)
 
         return x
 
-def squeezenet(class_num=952):
-    return SqueezeNet(class_num=class_num)
+def sqnetc9(class_num=952):
+    return SqNetC9(class_num=class_num)

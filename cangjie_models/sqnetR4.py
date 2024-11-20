@@ -8,6 +8,8 @@
     https://arxiv.org/abs/1506.02626
 """
 
+#all hyperparameter divided by 2
+
 import torch
 import torch.nn as nn
 
@@ -45,29 +47,29 @@ class Fire(nn.Module):
 
         return x
 
-class SqueezeNet(nn.Module):
+class SqNetR4(nn.Module):
 
     """mobile net with simple bypass"""
     def __init__(self, class_num=952):
 
         super().__init__()
         self.stem = nn.Sequential(
-            # nn.MaxPool2d(2, 2),
-            nn.Conv2d(3, 96, 3, padding=1),
-            nn.BatchNorm2d(96),
+            nn.MaxPool2d(2, 2),
+            nn.Conv2d(3, 24, 3, padding=1),
+            nn.BatchNorm2d(24),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2, 2)
         )
 
-        self.fire2 = Fire(96, 128, 16)
-        self.fire3 = Fire(128, 128, 16)
-        self.fire4 = Fire(128, 256, 32)
-        self.fire5 = Fire(256, 256, 32)
-        self.fire6 = Fire(256, 384, 48)
-        self.fire7 = Fire(384, 384, 48)
-        self.fire8 = Fire(384, 512, 64)
-        self.fire9 = Fire(512, 512, 64)
-        self.conv10 = nn.Conv2d(512, class_num, 1)
+        self.fire2 = Fire(24, 32, 4)
+        self.fire3 = Fire(32, 32, 4)
+        self.fire4 = Fire(32, 64, 8)
+        self.fire5 = Fire(64, 64, 8)
+        self.fire6 = Fire(64, 96, 12)
+        self.fire7 = Fire(96, 96, 12)
+        self.fire8 = Fire(96, 128, 16)
+        self.fire9 = Fire(128, 128, 16)
+        self.conv10 = nn.Conv2d(128, class_num, 1)
         self.avg = nn.AdaptiveAvgPool2d(1)
         self.maxpool = nn.MaxPool2d(2, 2)
 
@@ -93,5 +95,5 @@ class SqueezeNet(nn.Module):
 
         return x
 
-def squeezenet(class_num=952):
-    return SqueezeNet(class_num=class_num)
+def sqnetr4(class_num=952):
+    return SqNetR4(class_num=class_num)

@@ -61,3 +61,5 @@ class CIFAR100Test(Dataset):
             image = self.transform(image)
         return label, image
 
+
+

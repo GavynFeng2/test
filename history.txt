@@ -1,0 +1,7 @@
+python cangjie_train.py -gpu True
+conda deactivate
+conda activate w2_2
+python cangjie_train.py -gpu True
+python cangjie_test.py -weight checkpoint\squeezenet\Monday_15_July_2024_00h_34m_50s\squeezenet-7-best.pth -gpu
+python cangjie_train.py -gpu True
+doskey /HISTORY > history.txt

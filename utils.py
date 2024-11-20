@@ -19,8 +19,15 @@ from torch.utils.data import DataLoader
 def get_network(args):
     """ return given network
     """
-
-    if args.net == 'vgg16':
+    print(args.net)
+    if args.net == 'sqnetf4':
+        from cangjie_models.sqnetF4 import sqnetf4
+        net = sqnetf4()
+        print("network selected")
+    elif args.net == 'sqnetc3579':
+        from cangjie_models.sqnetC3579 import sqnetc3579
+        net = sqnetc3579()
+    elif args.net == 'vgg16':
         from models.vgg import vgg16_bn
         net = vgg16_bn()
     elif args.net == 'vgg13':

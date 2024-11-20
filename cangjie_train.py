@@ -1,40 +1,36 @@
-# train.py
-#!/usr/bin/env	python3
-
-""" train network using pytorch
-
-author baiyu
-"""
-
-import os
-import sys
+from cangjie_utils import get_training_loader,get_val_loader
+from models.squeezenet import squeezenet
+from time import perf_counter
 import argparse
-import time
-from datetime import datetime
+import os
+# from utils import WarmUpLR
 
-import numpy as np
 import torch
 import torch.nn as nn
-import torch.optim as optim
-import torchvision
-import torchvision.transforms as transforms
-
-from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-
 from conf import settings
-from utils import get_network, get_training_dataloader, get_test_dataloader, WarmUpLR, \
+
+from utils import  WarmUpLR, \
     most_recent_folder, most_recent_weights, last_epoch, best_acc_weights
-
+from torch.utils.tensorboard import SummaryWriter
+from cangjie_models.sqnetR import sqnetr
+from cangjie_models.sqnetC9 import sqnetc9
+from cangjie_models.sqnetC3579 import sqnetc3579
+from cangjie_models.sqnetF4 import sqnetf4
+from cangjie_models.sqnetF4C3579 import sqnetf4c3579
+from cangjie_models.sqnetR4 import sqnetr4
+from cangjie_models.sqnetR4C3579 import sqnetr4c3579
+from cangjie_models.sqnetD4 import sqnetd4
+from cangjie_models.sqnetD4C3579 import sqnetd4c3579
 def train(epoch):
-
-    start = time.time()
+    start_time = perf_counter()
     net.train()
-    for batch_index, (images, labels) in enumerate(ETL952_training_loader):
+    for batch_index, (images, labels) in enumerate(ETL952TrainLoader):
 
         if args.gpu:
-            labels = labels.cuda()
+            labels = labels.cuda().long()
             images = images.cuda()
+        else:
+            labels = labels.long()
 
         optimizer.zero_grad()
         outputs = net(images)
@@ -42,21 +38,20 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-        n_iter = (epoch - 1) * len(ETL952_training_loader) + batch_index + 1
-
+        n_iter = (epoch - 1) * len(ETL952TrainLoader) + batch_index + 1    
         last_layer = list(net.children())[-1]
         for name, para in last_layer.named_parameters():
             if 'weight' in name:
                 writer.add_scalar('LastLayerGradients/grad_norm2_weights', para.grad.norm(), n_iter)
             if 'bias' in name:
                 writer.add_scalar('LastLayerGradients/grad_norm2_bias', para.grad.norm(), n_iter)
-
-        print('Training Epoch: {epoch} [{trained_samples}/{total_samples}]\tLoss: {:0.4f}\tLR: {:0.6f}'.format(
+        print('Training Epoch: {epoch}/{total_epochs} [{trained_samples}/{total_samples}]\tLoss: {:0.4f}\tLR: {:0.6f}'.format(
             loss.item(),
             optimizer.param_groups[0]['lr'],
             epoch=epoch,
-            trained_samples=batch_index * args.b + len(images),
-            total_samples=len(ETL952_training_loader.dataset)
+            total_epochs=settings.EPOCH,
+            trained_samples=batch_index * args.batch_size + len(images),
+            total_samples=len(ETL952TrainLoader.dataset)
         ))
 
         #update training loss for each iteration
@@ -70,87 +65,94 @@ def train(epoch):
         attr = attr[1:]
         writer.add_histogram("{}/{}".format(layer, attr), param, epoch)
 
-    finish = time.time()
-
-    print('epoch {} training time consumed: {:.2f}s'.format(epoch, finish - start))
+    finish_time = perf_counter()
+    with open('train.log', 'a') as f:
+        f.write('epoch {} training time consumed: {:.2f}s\n'.format(epoch, finish_time - start_time))
+    print('epoch {} training time consumed: {:.2f}s'.format(epoch, finish_time - start_time))
 
 @torch.no_grad()
 def eval_training(epoch=0, tb=True):
 
-    start = time.time()
+    start_time = perf_counter()
     net.eval()
-
     test_loss = 0.0 # cost function error
     correct = 0.0
 
-    for (images, labels) in ETL952_test_loader:
-
+    for batch_index, (images, labels) in enumerate(ETL952ValLoader):
         if args.gpu:
+            labels = labels.cuda().long()
             images = images.cuda()
-            labels = labels.cuda()
-
+        else:
+            labels = labels.long()
+            
+        
         outputs = net(images)
         loss = loss_function(outputs, labels)
-
         test_loss += loss.item()
         _, preds = outputs.max(1)
         correct += preds.eq(labels).sum()
 
-    finish = time.time()
-    if args.gpu:
-        print('GPU INFO.....')
-        print(torch.cuda.memory_summary(), end='')
+    finish_time = perf_counter()
     print('Evaluating Network.....')
-    print('Test set: Epoch: {}, Average loss: {:.4f}, Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
-        epoch,
-        test_loss / len(ETL952_test_loader.dataset),
-        correct.float() / len(ETL952_test_loader.dataset),
-        finish - start
-    ))
+    print('Epoch: {}, Test Loss: {:.4f}, Test Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
+            epoch, test_loss / len(ETL952ValLoader.dataset),
+            correct.float() / len(ETL952ValLoader.dataset),
+            finish_time - start_time
+        ))
     print()
-
-    #add informations to tensorboard
     if tb:
-        writer.add_scalar('Test/Average loss', test_loss / len(ETL952_test_loader.dataset), epoch)
-        writer.add_scalar('Test/Accuracy', correct.float() / len(ETL952_test_loader.dataset), epoch)
+        writer.add_scalar('Test/Average loss', test_loss / len(ETL952ValLoader.dataset), epoch)
+        writer.add_scalar('Test/Accuracy', correct.float() / len(ETL952ValLoader.dataset), epoch)
 
-    return correct.float() / len(ETL952_test_loader.dataset)
+    return correct.float() / len(ETL952ValLoader.dataset)
 
 if __name__ == '__main__':
-
+    
     parser = argparse.ArgumentParser()
-    parser.add_argument('-net', type=str, required=True, help='net type')
-    parser.add_argument('-gpu', action='store_true', default=False, help='use gpu or not')
-    parser.add_argument('-b', type=int, default=256, help='batch size for dataloader')
+    parser.add_argument('-net', default='sqnetd4c3579', type=str, help='net type')
+    parser.add_argument('-gpu', type=bool, default=False, help='use gpu or not')
+    parser.add_argument('-batch_size', type=int, default=64, help='batch size for dataloader')
     parser.add_argument('-warm', type=int, default=1, help='warm up training phase')
     parser.add_argument('-lr', type=float, default=0.1, help='initial learning rate')
     parser.add_argument('-resume', action='store_true', default=False, help='resume training')
     args = parser.parse_args()
 
-    net = get_network(args)
+    current_time = settings.TIME_NOW
 
-    #data preprocessing:
-    ETL952_training_loader = get_training_dataloader(
-        settings.CIFAR100_TRAIN_MEAN,
-        settings.CIFAR100_TRAIN_STD,
-        num_workers=4,
-        batch_size=args.b,
-        shuffle=True
-    )
+    
 
-    ETL952_test_loader = get_test_dataloader(
-        settings.CIFAR100_TRAIN_MEAN,
-        settings.CIFAR100_TRAIN_STD,
-        num_workers=4,
-        batch_size=args.b,
-        shuffle=True
-    )
+    #model
+    net = sqnetd4c3579()
+    file_name = "net_ver"+current_time+".log"
+    net_ver_path = os.path.join('net_ver',file_name)
+    if not os.path.exists('net_ver'):
+        os.mkdir('net_ver')
+    with open(net_ver_path, "w") as f:
+        f.write(str(net))
+    print("assigned model")
 
-    loss_function = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
-    train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2) #learning rate decay
-    iter_per_epoch = len(ETL952_training_loader)
+    #data
+    time_in = perf_counter()
+    print("start loading data")
+    ETL952TrainLoader = get_training_loader(batch_size=args.batch_size)
+    ETL952ValLoader = get_val_loader(batch_size=args.batch_size)
+    print("data loaded")
+    time_out = perf_counter()
+    with open("train.log", "a") as f:
+        f.write(f"net_ver {net.__class__.__name__} {current_time} ")
+        f.write(f"train at {current_time} ")
+        f.write("data loading time: {:.2f}s\n".format(time_out - time_in))
+
+
+    #setup model
+
+    loss_function = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
+    train_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2) #learning rate decay
+    iter_per_epoch = len(ETL952TrainLoader)
     warmup_scheduler = WarmUpLR(optimizer, iter_per_epoch * args.warm)
+
+    
 
     if args.resume:
         recent_folder = most_recent_folder(os.path.join(settings.CHECKPOINT_PATH, args.net), fmt=settings.DATE_FORMAT)
@@ -169,10 +171,11 @@ if __name__ == '__main__':
     #since tensorboard can't overwrite old values
     #so the only way is to create a new tensorboard log
     writer = SummaryWriter(log_dir=os.path.join(
-            settings.LOG_DIR, args.net, settings.TIME_NOW))
+            settings.LOG_DIR, args.net, current_time))
     input_tensor = torch.Tensor(1, 3, 32, 32)
     if args.gpu:
         input_tensor = input_tensor.cuda()
+        net = net.cuda()
     writer.add_graph(net, input_tensor)
 
     #create checkpoint folder to save model
@@ -200,7 +203,7 @@ if __name__ == '__main__':
 
         resume_epoch = last_epoch(os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder))
 
-
+    time_in = perf_counter()
     for epoch in range(1, settings.EPOCH + 1):
         if epoch > args.warm:
             train_scheduler.step(epoch)
@@ -224,5 +227,8 @@ if __name__ == '__main__':
             weights_path = checkpoint_path.format(net=args.net, epoch=epoch, type='regular')
             print('saving weights file to {}'.format(weights_path))
             torch.save(net.state_dict(), weights_path)
-
+    time_out = perf_counter()
+    with open("train.log", "a") as f:
+        f.write("train at" + current_time + " ")
+        f.write("train time: {:.2f}s\n".format(time_out - time_in))
     writer.close()
